@@ -34,4 +34,10 @@ public class Alanalysis {
 	public List<jp.co.dk.morphologicalanalysis.Token> getToken() {
 		return this.tokenList;
 	}
+	
+	public List<jp.co.dk.morphologicalanalysis.Token> getNouns() {
+		List<jp.co.dk.morphologicalanalysis.Token> nouns = new ArrayList<>();
+		for (jp.co.dk.morphologicalanalysis.Token token : this.tokenList) if (token.isNoun()) nouns.add(token);
+		return nouns;
+	}
 }
