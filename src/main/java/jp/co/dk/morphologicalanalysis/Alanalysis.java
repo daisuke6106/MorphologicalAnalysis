@@ -1,7 +1,9 @@
 package jp.co.dk.morphologicalanalysis;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.atilika.kuromoji.Tokenizer;
 import org.atilika.kuromoji.Tokenizer.Builder;
@@ -63,5 +65,42 @@ public class Alanalysis {
 		List<jp.co.dk.morphologicalanalysis.Token> nouns = new ArrayList<>();
 		for (jp.co.dk.morphologicalanalysis.Token token : this.tokenList) if (token.isNoun()) nouns.add(token);
 		return nouns;
+	}
+	
+	/**
+	 * 指定された数でのNGramを実行します。
+	 * 
+	 * @param n N
+	 * @return NGram実施結果
+	 */
+	public List<List<jp.co.dk.morphologicalanalysis.Token>> ngram(int n) {
+		List<List<jp.co.dk.morphologicalanalysis.Token>> ngramResult = new ArrayList<>();
+		for (int i=0; i<this.tokenList.size(); i++) {
+			List<jp.co.dk.morphologicalanalysis.Token> ngramList = new ArrayList<>();
+			if (i + n > this.tokenList.size()) break;
+			for (int k=0; k<n; k++) ngramList.add(this.tokenList.get(i + k));
+			ngramResult.add(ngramList);
+		}
+		return ngramResult;
+	}
+	
+	/**
+	 * 指定のNGramをグループ化して同じ構成のNGramのグループ件数をカウントします。
+	 * 
+	 * @param n N
+	 * @return NGramカウント実施結果（key:NGramグループ、value:カウント）
+	 */
+	public Map<NGramGroup, Integer> ngramCount(int n) {
+		Map<NGramGroup, Integer> ngramCounter = new HashMap<>();
+		for (List<jp.co.dk.morphologicalanalysis.Token> ngramGroup : this.ngram(n)) {
+			NGramGroup nGramGroup = new NGramGroup(ngramGroup);
+			Integer count = ngramCounter.get(nGramGroup);
+			if (count == null) {
+				ngramCounter.put(nGramGroup, new Integer(1));
+			} else {
+				ngramCounter.put(nGramGroup, new Integer(count.intValue() + 1));
+			}
+		}
+		return ngramCounter;
 	}
 }
